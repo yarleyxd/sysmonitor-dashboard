@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from servidor.api.desktops import rota 
 
 aplicacao = FastAPI(
@@ -8,6 +10,12 @@ aplicacao = FastAPI(
 )
 
 aplicacao.include_router(rota)
+
+aplicacao.mount(
+    "/arquivos",
+    StaticFiles(directory="painel/arquivos"),
+    name="arquivos"
+)
 
 @aplicacao.get("/")
 def inicio():
@@ -21,3 +29,9 @@ def verificar_status():
     return {
         "status": "Online",
     }
+
+@aplicacao.get("/painel")
+def abrir_painel():
+    return FileResponse(
+    "painel/models/index.html"
+    )

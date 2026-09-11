@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SysMonitor</title>
+
+    <link rel="stylesheet" href="/arquivos/style.css">
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>SysMonitor</h1>
+
+        <p>Monitoramento de computadores e rede</p>
+
+    </header>
+
+
+    <main>
+
+        <h2>Desktops</h2>
+
+        <div id="lista-desktops">
+
+            <p>Carregando desktops...</p>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        async function carregarDesktops() {
+
+            try {
+
+                const resposta = await fetch("/desktops/");
+
+                const dados = await resposta.json();
+
+                const lista = document.getElementById("lista-desktops");
+
+                lista.innerHTML = "";
+
+
+                if (dados.desktops.length === 0) {
+
+                    lista.innerHTML = `
+                        <p>Nenhum desktop encontrado.</p>
+                    `;
+
+                    return;
+                }
+
+
+                dados.desktops.forEach(desktop => {
+
+                    const cartao = document.createElement("div");
+
+                    cartao.className = "cartao-desktop";
+
+
+                    cartao.innerHTML = `
+
+                        <h3>${desktop.nome}</h3>
+
+                        <p>
+                            <strong>IP:</strong>
+                            ${desktop.ip}
+                        </p>
+
+                        <p>
+                            <strong>Sistema:</strong>
+                            ${desktop.sistema_operacional}
+                        </p>
+
+                        <p>
+                            <strong>CPU:</strong>
+                            ${desktop.cpu.uso}%
+                        </p>
+
+                        <p>
+                            <strong>RAM:</strong>
+                            ${desktop.ram.uso_percentual}%
+                        </p>
+
+                        <p>
+                            <strong>Armazenamento:</strong>
+                            ${desktop.armazenamento.uso_percentual}%
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            <span class="online">
+                                ● Online
+                            </span>
+                        </p>
+
+                    `;
+
+                    lista.appendChild(cartao);
+
+                });
+
+
+            } catch (erro) {
+
+                console.error("Erro:", erro);
+
+                document.getElementById("lista-desktops").innerHTML = `
+                    <p>Erro ao carregar os desktops.</p>
+                `;
+
+            }
+
+        }
+
+
+        carregarDesktops();
+
+    </script>
+
+</body>
+
+</html>

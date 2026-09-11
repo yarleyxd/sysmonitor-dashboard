@@ -10,7 +10,7 @@ desktops = []
 @rota.get("/")
 def listar_desktops():
     return {
-        "Desktops": []
+        "Desktops": desktops
     }
 
 @rota.post("/registrar")
