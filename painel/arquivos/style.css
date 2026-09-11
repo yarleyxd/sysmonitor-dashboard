@@ -1,0 +1,61 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f1f3f6;
+    color: #222;
+}
+
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 25px 40px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header p {
+    margin-bottom: 0;
+    color: #d1d5db;
+}
+
+main {
+    padding: 35px 40px;
+}
+
+main h2 {
+    margin-bottom: 25px;
+}
+
+#lista-desktops {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cartao-desktop {
+    background-color: white;
+    width: 300px;
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+.cartao-desktop h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.cartao-desktop p {
+    margin: 10px 0;
+}
+
+.online {
+    color: green;
+    font-weight: bold;
+}
