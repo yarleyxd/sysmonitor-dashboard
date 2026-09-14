@@ -1,6 +1,6 @@
 import requests
 
-ENDERECO_LOCAL = "http://127.0.0.1:8000"
+ENDERECO_LOCAL = "http://127.0.0.1:8000" # Localhost para teste, mudar para o endereço do servidor.
 
 def enviar_informacoes(informacoes):
     endereco = ENDERECO_LOCAL + "/desktops/registrar"

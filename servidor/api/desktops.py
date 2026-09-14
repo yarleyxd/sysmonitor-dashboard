@@ -13,10 +13,30 @@ def listar_desktops():
         "Desktops": desktops
     }
 
+@rota.get("/{nome}")
+def obter_desktop(nome: str):
+    for desktop in desktops:
+        if desktop["nome"] == nome:
+            return {
+                "desktop": desktop
+            }
+    raise HTTPException(
+        status_code=404, 
+        detail="Desktop não encontrado."
+        )
+
 @rota.post("/registrar")
 def registrar_desktop(informacoes: dict):
     nome = informacoes.get("nome")
+    
+    if not nome:
+        raise HTTPException(
+            status_code=400, 
+            detail="Nome do desktop não informado."
+            )
+    
     desktop_existente = None
+
     for desktop in desktops:
         if desktop["nome"] == nome:
             desktop_existente = desktop

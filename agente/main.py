@@ -1,18 +1,30 @@
+import time
+from datetime import datetime
 from agente.sistema import coletar_informacoes_sistema
 from agente.rede import obter_interfaces_rede
 from agente.envio import enviar_informacoes
 
+intervalo = 5
 
 def iniciar_agente():
+    print("Iniciando agente...")
+    print(f"Enviando formações a cada {intervalo} segundos.")
 
-    informacoes = coletar_informacoes_sistema()
-    informacoes["interfaces_rede"] = obter_interfaces_rede()
+    while True:
+        try:
+            informacoes = coletar_informacoes_sistema()
+            informacoes["interfaces_rede"] = obter_interfaces_rede()
+            informacoes["ultima_comunicacao"] = datetime.now().isoformat()
 
-    print("Informações coletadas:")
-    print(informacoes)
+            print("Informações coletadas:")
+            print(informacoes)
 
-    enviar_informacoes(informacoes)
+            enviar_informacoes(informacoes)
 
+        except Exception as erro:
+            print(f"Erro ao coletar informações: {erro}")
+
+        time.sleep(intervalo)
 
 if __name__ == "__main__":
     iniciar_agente()
