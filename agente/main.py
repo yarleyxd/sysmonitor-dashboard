@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from agente.sistema import coletar_informacoes_sistema
 from agente.rede import obter_interfaces_rede
 from agente.envio import enviar_informacoes

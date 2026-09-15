@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from datetime import datetime
 
 rota = APIRouter(
     prefix = "/desktops",
@@ -9,6 +10,21 @@ desktops = []
 
 @rota.get("/")
 def listar_desktops():
+
+    agora = datetime.now()
+
+    for desktop in desktops:
+        ultima_atividade = datetime.fromisoformat(
+            desktop["ultima_atividade"]
+        )
+
+        segundos_desde_ultima_atividade = (agora - ultima_atividade).total_seconds()
+
+        if segundos_desde_ultima_atividade > 40:
+            desktop["status"] = "Offline"
+        else:
+            desktop["status"] = "Online"
+
     return {
         "Desktops": desktops
     }
@@ -34,6 +50,8 @@ def registrar_desktop(informacoes: dict):
             status_code=400, 
             detail="Nome do desktop não informado."
             )
+
+    informacoes["ultima_atividade"] = datetime.now().isoformat()
     
     desktop_existente = None
 
@@ -44,10 +62,10 @@ def registrar_desktop(informacoes: dict):
 
     if desktop_existente:
         desktop_existente.update(informacoes)
-        desktop_existente["status"] = "online"
+        desktop_existente["status"] = "Online"
 
     else: 
-        informacoes["status"] = "online"
+        informacoes["status"] = "Online"
         desktops.append(informacoes)
     
     return {
