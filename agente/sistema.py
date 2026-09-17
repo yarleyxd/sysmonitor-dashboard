@@ -60,6 +60,45 @@ def obter_tempo_ligado():
         "minutos": minutos
     }
 
+def obter_aplicativos():
+    aplicativos = []
+
+    for processo in psutil.process_iter(
+        ["pid", "name", "username", "exe"]
+    ):
+        try:
+            info = processo.info
+
+            nome = info["name"]
+            executavel = info["exe"]
+
+            if not nome or not executavel:
+                continue
+
+            caminho = executavel.lower()
+
+            if "\\windows\\" in caminho:
+                continue
+
+            if "\\windowapps\\" in caminho:
+                continue
+
+            aplicativos.append({
+                "pid": info["pid"],
+                "nome": nome,
+                "usuario": info["username"],
+                "caminho_executavel": executavel
+            }) 
+
+        except (
+            psutil.NoSuchProcess, 
+            psutil.AccessDenied, 
+            psutil.ZombieProcess
+        ):
+            continue
+
+        return aplicativos
+            
 def coletar_informacoes_sistema():
     return {
         "nome": obter_nome_desktop(),
@@ -68,5 +107,6 @@ def coletar_informacoes_sistema():
         "cpu": obter_cpu(),
         "ram": obter_ram(),
         "armazenamento": obter_armazenamento(),
-        "tempo_ligado": obter_tempo_ligado()
+        "tempo_ligado": obter_tempo_ligado(),
+        "aplicativos": obter_aplicativos()
     }
