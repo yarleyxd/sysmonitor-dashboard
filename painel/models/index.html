@@ -7,39 +7,72 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SysMonitor</title>
+    <title>SysMonitor | Dashboard</title>
 
-    <link rel="stylesheet" href="/arquivos/css/style.css">
+    <link rel="stylesheet" href="/arquivos/style.css">
 
 </head>
 
 <body>
 
-    <header>
+    <header class="cabecalho">
+        <div>  
+            <h1>SysMonitor</h1>
+            <p>Monitoramento de Computadores</p>
+        </div>
 
-        <h1>SysMonitor</h1>
-
-        <p>Monitoramento de computadores</p>
-
+        <div class="conexao">
+            <span class="indicador"></span>
+            <span class="status-servidor">Conectado</span>
+        </div>
     </header>
-
 
     <main>
 
-        <section>
+        <section class="resumo">
 
-            <h2>Computadores</h2>
+            <div class="card-resumo">
+                <span>Total de Computadores</span>
+                <h2 id="total-computadores">0</h2>
+            </div>
+            
+            <div class="card-resumo">
+                <span>Online</span>
+                <h2 id="computadores-online">0</h2>
+            </div>
 
-            <div id="lista-computadores">
+            <div class="card-resumo">
+                <span>Offline</span>
+                <h2 id="computadores-offline">0</h2>
+            </div>
 
-                Carregando computadores...
+            <div class="card-resumo">
+                <span>CPU Média</span>
+                <h2 id="cpu-media">0%</h2>
+            </div>
 
+            <div class="card-resumo">
+                <span>RAM Média</span>
+                <h2 id="ram-media">0%</h2>
             </div>
 
         </section>
 
-    </main>
+        <section class="secao-computadores">
 
+            <div class="cabecalho-secao">
+                <div>
+                    <h2>Computadores</h2>
+                    <p>Monitoramento dos terminais registrados</p>
+                </div>
+
+                <div id="lista-computadores">
+                    Carregando...
+                </div>
+
+        </section>
+
+    </main>
 
     <script src="/arquivos/js/dashboard.js"></script>
 

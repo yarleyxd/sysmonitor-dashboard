@@ -19,10 +19,9 @@ aplicacao.mount(
 
 @aplicacao.get("/")
 def inicio():
-    return {
-        "status": "Online",
-        "mensagem": "Bem-vindo ao SysMonitor!"
-        }
+        return FileResponse(
+            "painel/models/index.html"
+        )     
 
 @aplicacao.get("/status")
 def verificar_status():
