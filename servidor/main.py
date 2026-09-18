@@ -1,7 +1,8 @@
-from fastapi import FastAPI
 from pathlib import Path
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
 from servidor.api.desktops import rota 
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -17,16 +18,14 @@ aplicacao.include_router(rota)
 
 aplicacao.mount(
     "/arquivos",
-    StaticFiles(directory= PAINEL / "arquivos"),
+    StaticFiles(directory=str(PAINEL / "arquivos")),
     name="arquivos",
 )
 
 
 @aplicacao.get("/")
 def inicio():
-        return FileResponse(
-            PAINEL / "models" / "index.html"
-        )     
+        return FileResponse(PAINEL / "models" / "index.html")     
 
 
 @aplicacao.get("/status")
@@ -37,6 +36,4 @@ def verificar_status():
 
 @aplicacao.get("/painel")
 def abrir_painel():
-    return FileResponse(
-    PAINEL / "models" / "index.html"
-    )
+    return FileResponse(PAINEL / "models" / "index.html")

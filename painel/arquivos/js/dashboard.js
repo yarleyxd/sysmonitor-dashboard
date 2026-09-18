@@ -9,7 +9,7 @@ const statusServidor = document.getElementById("status-servidor");
 const ultimaAtualizacao = document.getElementById("ultima-atualizacao");
 const indicadorConexao = document.getElementById("indicador-conexao");
 
-const detalhesAbertos = newSet();
+const detalhesAbertos = new Set();
 
 
 function criarElemento(tag, classe, texto) {

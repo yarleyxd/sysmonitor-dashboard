@@ -1,8 +1,9 @@
 import time
 from datetime import datetime
-from agente.sistema import coletar_informacoes_sistema
-from agente.rede import obter_interfaces_rede
+
 from agente.envio import enviar_informacoes
+from agente.rede import obter_interfaces_rede
+from agente.sistema import coletar_informacoes_sistema
 
 intervalo = 5
 
@@ -20,7 +21,7 @@ def iniciar_agente():
             print(
                 f"  Desktop: {informacoes.get('nome')}, | "
                 f"IP: {informacoes.get('ip')} | "
-                f"CPU: {informacoes.get('cpu')} | "
+                f"CPU: {informacoes.get('cpu', {}).get('uso')}% | "
                 f"Apps: {len(informacoes.get('aplicativos') or [])}"
             )
 
