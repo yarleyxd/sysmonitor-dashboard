@@ -7,16 +7,18 @@ def enviar_informacoes(informacoes):
 
     try:
         resposta = requests.post(
-            endereco, 
+            endereco,
             json=informacoes,
             timeout= 5
-            )
+        )
         
         if resposta.status_code == 200:
-                print("Informações do sistema enviadas com sucesso!")
+            print("Informações do sistema enviadas com sucesso!")
                 
         else:
-                    print(f"Falha ao enviar informações do sistema. Código de status: {resposta.status_code}")
-                    
+            print(
+                f"Falha ao enviar informações do sistema."
+                f"Código de status: {resposta.status_code}"
+            )
     except requests.exceptions.RequestException as erro:
         print(f"Erro ao enviar informações do sistema: {erro}")

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
 from datetime import datetime
+
+from fastapi import APIRouter, HTTPException
 
 rota = APIRouter(
     prefix = "/desktops",
@@ -41,7 +42,7 @@ def obter_desktop(nome: str):
             }
 
     raise HTTPException(
-        status_code=404, 
+        status_code=404,
         detail="Desktop não encontrado.",
         )
 
@@ -51,7 +52,7 @@ def registrar_desktop(informacoes: dict):
     
     if not nome:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="Nome do desktop não informado.",
             )
 
@@ -71,5 +72,5 @@ def registrar_desktop(informacoes: dict):
 
     return {
         "mensagem": "Desktop registrado com sucesso!",
-        "desktop": informacoes
+        "desktop": informacoes,
     }
