@@ -13,7 +13,7 @@ def obter_interfaces_rede():
         }
 
         for endereco in enderecos:
-            if endereco.family.name == "AF_INET":
+            if endereco.family.name != "AF_INET":
                 continue
 
             interface["enderecos"].append({
