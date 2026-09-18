@@ -8,37 +8,41 @@ rota = APIRouter(
 
 desktops = []
 
+LIMITE_OFFLINE = 40 # Limite em segundos p/ definir como "Offline" um desktop que não se comunicou recentemente.
+
+def atualizar_status(desktop):
+    ultima_atividade = desktop.get("ultima_atividade")
+    
+    try:
+        referencia = datetime.fromisoformat(ultima_atividade)
+        segundos = (datetime.now() - referencia).total_seconds()
+        desktop["status"] = "Online" if segundos <= LIMITE_OFFLINE else "Offline"
+    except (TypeError, ValueError):
+        desktop["status"] = "Offline"
+    
+    return desktop
+
 @rota.get("/")
 def listar_desktops():
-
-    agora = datetime.now()
-
     for desktop in desktops:
-        ultima_atividade = datetime.fromisoformat(
-            desktop["ultima_atividade"]
-        )
-
-        segundos_desde_ultima_atividade = (agora - ultima_atividade).total_seconds()
-
-        if segundos_desde_ultima_atividade > 40:
-            desktop["status"] = "Offline"
-        else:
-            desktop["status"] = "Online"
+        atualizar_status(desktop)
 
     return {
-        "Desktops": desktops
+        "Desktops": desktops,
     }
 
 @rota.get("/{nome}")
 def obter_desktop(nome: str):
     for desktop in desktops:
-        if desktop["nome"] == nome:
+        atualizar_status(desktop)
+        if desktop.get("nome") == nome:
             return {
-                "desktop": desktop
+                "desktop": desktop,
             }
+
     raise HTTPException(
         status_code=404, 
-        detail="Desktop não encontrado."
+        detail="Desktop não encontrado.",
         )
 
 @rota.post("/registrar")
@@ -48,27 +52,24 @@ def registrar_desktop(informacoes: dict):
     if not nome:
         raise HTTPException(
             status_code=400, 
-            detail="Nome do desktop não informado."
+            detail="Nome do desktop não informado.",
             )
 
     informacoes["ultima_atividade"] = datetime.now().isoformat()
-    
-    desktop_existente = None
+    informacoes["status"] = "Online"
 
-    for desktop in desktops:
-        if desktop["nome"] == nome:
-            desktop_existente = desktop
-            break
+    for indice, desktop in enumerate(desktops):
+        if desktop.get("nome") == nome:
+            desktop_atualizado = {**desktop, **informacoes}
+            desktops[indice] = desktop_atualizado
+            return {
+                "mensagem": "Desktop registrado com sucesso!",
+                "desktop": desktop_atualizado
+            }
+            
+    desktops.append(informacoes)
 
-    if desktop_existente:
-        desktop_existente.update(informacoes)
-        desktop_existente["status"] = "Online"
-
-    else: 
-        informacoes["status"] = "Online"
-        desktops.append(informacoes)
-    
     return {
         "mensagem": "Desktop registrado com sucesso!",
         "desktop": informacoes
-        }
+    }
