@@ -1,9 +1,10 @@
 from fastapi import FastAPI
+from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from servidor.api.desktops import rota 
 
-RAIZ = Path(__file__).resolve.parent.parent
+RAIZ = Path(__file__).resolve().parent.parent
 PAINEL = RAIZ / "painel"
 
 aplicacao = FastAPI(
