@@ -106,8 +106,8 @@ def obter_aplicativos():
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
 
-        aplicativos.sort(key=lambda item: (item["nome"] or "").lower())
-        return aplicativos
+    aplicativos.sort(key=lambda item: (item["nome"] or "").lower())
+    return aplicativos
             
 def coletar_informacoes_sistema():
     return {
