@@ -40,8 +40,16 @@ body {
 .indicador {
     width: 10px;
     height: 10px;
-    background: #22c55e;
+    background: #94a3b8;
     border-radius: 50%;
+}
+
+.indicador.conectado {
+    background: #22c55e;
+}
+
+.indicador.erro {
+    background: #ef4444;
 }
 
 main {
@@ -85,6 +93,7 @@ main {
     color: #dc2626;
 }
 
+.cabecacalho-secao,
 .titulo-secao {
     display: flex;
     justify-content: space-between;
@@ -93,10 +102,12 @@ main {
     margin-bottom: 20px;
 }
 
+.cabecaclho-secao h2,
 .titulo-secao h2 {
     margin: 0 0 8px;
 }
 
+.cabecalho-secao p,
 .titulo-secao p {
     color: #64748b;
     margin: 0;
@@ -222,7 +233,7 @@ main {
     main {
         padding: 18px;
     }
-
+    .cabecacalho-secao,
     .titulo-secao {
         flex-direction: column;
         align-items: flex-start;
@@ -238,6 +249,8 @@ main {
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
 .botao-detalhes:hover {
