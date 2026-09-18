@@ -18,5 +18,5 @@ def enviar_informacoes(informacoes):
         else:
                     print(f"Falha ao enviar informações do sistema. Código de status: {resposta.status_code}")
                     
-    except requests.exceptions.RequestException as e:
-        print(f"Erro ao enviar informações do sistema: {e}")
+    except requests.exceptions.RequestException as erro:
+        print(f"Erro ao enviar informações do sistema: {erro}")

@@ -8,7 +8,7 @@ intervalo = 5
 
 def iniciar_agente():
     print("Iniciando agente...")
-    print(f"Enviando formações a cada {intervalo} segundos.")
+    print(f"Enviando informações a cada {intervalo} segundos.")
 
     while True:
         try:
@@ -17,7 +17,12 @@ def iniciar_agente():
             informacoes["ultima_comunicacao"] = datetime.now().isoformat()
 
             print("Informações coletadas:")
-            print(informacoes)
+            print(
+                f"  Desktop: {informacoes.get('nome')}, | "
+                f"IP: {informacoes.get('ip')} | "
+                f"CPU: {informacoes.get('cpu')} | "
+                f"Apps: {len(informacoes.get('aplicativos') or [])}"
+            )
 
             enviar_informacoes(informacoes)
 
