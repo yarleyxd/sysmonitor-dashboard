@@ -41,10 +41,7 @@ O **SysMonitor Dashboard** é um sistema desenvolvido em Python para monitorar c
 Desenvolver uma ferramenta de monitoramento que facilite o acompanhamento dos recursos e do status dos computadores, centralizando as informações em uma única interface.
 
 ## 👨‍💻 Autor
-
-**Yarley Aguiar**
-
-🔗 [GitHub](https://github.com/yarleyxd)
+Desenvolvido por [Yarley Aguiar](https://github.com/yarleyxd) 🔗
 
 ---
 
