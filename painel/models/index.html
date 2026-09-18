@@ -2,35 +2,28 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>SysMonitor | Dashboard</title>
-
     <link rel="stylesheet" href="/arquivos/style.css">
-
 </head>
 
 <body>
 
     <header class="cabecalho">
-        <div>  
+        <div>
             <h1>SysMonitor</h1>
             <p>Monitoramento de Computadores</p>
         </div>
 
         <div class="conexao">
-            <span class="indicador"></span>
-            <span class="status-servidor">Conectado</span>
+            <span class="indicador" id="indicador-conexao"></span>
+            <span class="status-servidor" id="status-servidor">Verificando...</span>
         </div>
     </header>
 
     <main>
-
         <section class="resumo">
-
             <div class="card-resumo">
                 <span>Total de Computadores</span>
                 <h2 id="total-computadores">0</h2>
@@ -55,27 +48,24 @@
                 <span>RAM Média</span>
                 <h2 id="ram-media">0%</h2>
             </div>
-
         </section>
 
         <section class="secao-computadores">
-
             <div class="cabecalho-secao">
                 <div>
                     <h2>Computadores</h2>
                     <p>Monitoramento dos terminais registrados</p>
                 </div>
-
+                <p id ="ultima-atualizacao">Aguardando dados...</p>
+            </div>
                 <div id="lista-computadores">
                     Carregando...
                 </div>
-
         </section>
-
     </main>
-
+    
     <script src="/arquivos/js/dashboard.js"></script>
-
 </body>
+
 
 </html>

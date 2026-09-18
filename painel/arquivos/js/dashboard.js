@@ -7,6 +7,9 @@ const cpuMedia = document.getElementById("cpu-media");
 const ramMedia = document.getElementById("ram-media");
 const statusServidor = document.getElementById("status-servidor");
 const ultimaAtualizacao = document.getElementById("ultima-atualizacao");
+const indicadorConexao = document.getElementById("indicador-conexao");
+
+const detalhesAbertos = newSet();
 
 
 function criarElemento(tag, classe, texto) {
@@ -353,52 +356,41 @@ function criarComputador(desktop) {
 
     computador.appendChild(indicadores);
 
-
-    /*
-     * BOTÃO DE DETALHES
-     */
-
     const botaoDetalhes = criarElemento(
         "button",
         "botao-detalhes",
-        "Ver detalhes"
+        detalhesAbertos.has(desktop.nome)
+        ? "Ocultar detalhes"
+        : "Ver detalhes"
     );
 
     computador.appendChild(botaoDetalhes);
 
 
-    /*
-     * ÁREA DE DETALHES
-     */
-
     const detalhes = criarDetalhes(desktop);
+    if (detalhesAbertos.has(desktop.nome)) {
+        detalhes.style.display = "block";
+    }
 
     computador.appendChild(detalhes);
 
 
-    /*
-     * ABRIR / FECHAR DETALHES
-     */
-
     botaoDetalhes.addEventListener("click", function () {
+        const aberto = detalhes.style.display === "none";
+        
+        detalhes.style.display = aberto ? "block" : "none";
+        botaoDetalhes.textContent = aberto
+        ? "Ocultar detalhes"
+        : "Ver detalhes";
 
-        if (detalhes.style.display === "none") {
-
-            detalhes.style.display = "block";
-
-            botaoDetalhes.textContent =
-                "Ocultar detalhes";
-
-        } else {
-
-            detalhes.style.display = "none";
-
-            botaoDetalhes.textContent =
-                "Ver detalhes";
+        if (desktop.nome) {
+            if (aberto) {
+                detalhesAbertos.add(desktop.nome);
+            } else {
+                detalhesAbertos.delete(desktop.nome);
+            }
         }
-
     });
-
 
     return computador;
 }
@@ -512,13 +504,18 @@ async function carregarComputadores() {
         }
 
 
-        statusServidor.textContent =
-            "Servidor conectado";
+        if (statusServidor) {
+            statusServidor.textContent = "Servidor Conectado";
+        }
 
+        if (indicadorConexao) {
+            indicadorConexao.classList.add("conectado");
+            indicadorConexao.classList.remove("erro");
+        }
 
-        ultimaAtualizacao.textContent =
-            `Atualizado às ${new Date().toLocaleTimeString("pt-BR")}`;
-
+        if (ultimaAtualizacao) {
+            ultimaAtualizacao.textContent = `Última atualização: ${new Date().toLocaleString("pt-BR")}`;
+        }
 
     } catch (erro) {
 
@@ -527,13 +524,18 @@ async function carregarComputadores() {
             erro
         );
 
+        if (statusServidor) {
+            statusServidor.textContent = "Falha na conexão com o servidor";
+        }
 
-        statusServidor.textContent =
-            "Erro de conexão";
+        if (indicadorConexao) {
+            indicadorConexao.classList.add("erro");
+            indicadorConexao.classList.remove("conectado");
+        }
 
-
-        ultimaAtualizacao.textContent =
-            "Falha ao atualizar os dados";
+        if (ultimaAtualizacao) {
+            ultimaAtualizacao.textContent = "Falha ao atualizar os dados";
+        }
     }
 }
 
