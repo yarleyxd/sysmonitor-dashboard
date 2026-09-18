@@ -42,7 +42,7 @@ def obter_ram():
 
 def obter_unidade_armazenamento():
     if platform.system() == "Windows":
-        return os.eviron.get("SystemDrive", "C:") + "\\"
+        return os.environ.get("SystemDrive", "C:") + "\\"
     return "/"
 
 def obter_armazenamento():
