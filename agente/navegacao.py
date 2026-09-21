@@ -8,7 +8,7 @@ from pathlib import Path
 LIMITE_REGISTROS = 50
 
 
-def _caminhos_historicos():
+def caminhos_historicos():
     caminhos = []
     home = Path.home()
 
@@ -70,7 +70,7 @@ def _caminhos_historicos():
     return caminhos
 
 
-def _converter_chromium(tempo):
+def converter_chromium(tempo):
     if not tempo:
         return None
     try:
@@ -79,7 +79,7 @@ def _converter_chromium(tempo):
         return None
 
 
-def _converter_firefox(tempo):
+def converter_firefox(tempo):
     if not tempo:
         return None
     try:
@@ -88,7 +88,7 @@ def _converter_firefox(tempo):
         return None
 
 
-def _copiar_para_temp(caminho):
+def copiar_para_temp(caminho):
     try:
         temporario = tempfile.NamedTemporaryFile(delete=False, suffix=".sqlite")
         temporario.close()
@@ -98,9 +98,9 @@ def _copiar_para_temp(caminho):
         return None
 
 
-def _ler_chromium(caminho, navegador):
+def ler_chromium(caminho, navegador):
     registros = []
-    copia = _copiar_para_temp(caminho)
+    copia = copiar_para_temp(caminho)
     if not copia:
         return registros
 
@@ -116,7 +116,7 @@ def _ler_chromium(caminho, navegador):
             registros.append({
                 "url": url,
                 "titulo": titulo or "",
-                "acessado_em": _converter_chromium(tempo),
+                "acessado_em": converter_chromium(tempo),
                 "navegador": navegador,
             })
         conexao.close()
@@ -131,9 +131,9 @@ def _ler_chromium(caminho, navegador):
     return registros
 
 
-def _ler_firefox(caminho, navegador):
+def ler_firefox(caminho, navegador):
     registros = []
-    copia = _copiar_para_temp(caminho)
+    copia = copiar_para_temp(caminho)
     if not copia:
         return registros
 
@@ -150,7 +150,7 @@ def _ler_firefox(caminho, navegador):
             registros.append({
                 "url": url,
                 "titulo": titulo or "",
-                "acessado_em": _converter_firefox(tempo),
+                "acessado_em": converter_firefox(tempo),
                 "navegador": navegador,
             })
         conexao.close()
@@ -168,12 +168,12 @@ def _ler_firefox(caminho, navegador):
 def obter_historico_navegacao():
     registros = []
 
-    for caminho, navegador, tipo in _caminhos_historicos():
+    for caminho, navegador, tipo in caminhos_historicos():
         try:
             if tipo == "chromium":
-                registros.extend(_ler_chromium(caminho, navegador))
+                registros.extend(ler_chromium(caminho, navegador))
             elif tipo == "firefox":
-                registros.extend(_ler_firefox(caminho, navegador))
+                registros.extend(ler_firefox(caminho, navegador))
         except Exception:
             continue
 
