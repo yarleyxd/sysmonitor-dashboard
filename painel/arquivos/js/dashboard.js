@@ -187,6 +187,99 @@ function criarListaAplicativos(desktop) {
     return secao;
 }
 
+function criarListaNavegacao(desktop) {
+    
+    const secao = criarElemento("div", "secaonavegacao");
+    secao.appendChild(criarElemento("h3", "", "Histórico de navegação recente"));
+
+    const registros = Array.isArray(desktop.navegacao)
+        ? desktop.navegacao
+        : [];
+
+    if (registros.length === 0) {
+        secao.appendChild(
+            criarElemento(
+                "p",
+                "sem-registros",
+                "Nenhum registro de navegação identificado."
+            )
+        );
+        return secao;
+    }
+
+    const lista = criarElemento("div", "lista-navegacao");
+
+    registros.forEach(registro => {
+        const item = criarElemento("div", "registro-navegacao");
+
+        const url = criarElemento(
+            "span",
+            "navegacao-url",
+            registro.url || "N/D"
+        );
+        url.title = registro.url || "";
+
+        const info = criarElemento (
+            "span",
+            "navegacao-info",
+            `${registro.navegador || "N/D"} • ${formatarData(registro.acessado_em)}`
+        );
+
+        item.appendChild(url);
+        item.appendChild(info);
+        lista.appendChild(item);
+    });
+
+    secao.appendChild(lista);
+    return secao;
+}
+
+function criarListaArquivosAbertos(desktop) {
+
+    const secao = criarElemento("div", "secao-arquivos");
+    secao.appendChild(criarElemento("h3", "", "Arquivos abertos por processos"));
+
+    const arquivos = Array.isArray(desktop.arquivos_abertos)
+        ? desktop.arquivos_abertos
+        : [];
+
+    if (arquivos.length === 0) {
+        secao .appendChild(
+            criarElemento(
+                "p",
+                "sem-registros",
+                "Nenhum arquivo aberto identificado."
+            )
+        );
+        return secao;
+    }
+
+    const lista = criarElemento("div", "lista-arquivos");
+
+    arquivos.forEach(arquivo => {
+        const item = criarElemento("div", "arquivo");
+
+        const caminho = criarElemento(
+            "span",
+            "arquivo-caminho",
+            arquivo.caminho || "N/D"
+        );
+        caminho.title = arquivo.caminho || "";
+
+        const processo = criarElemento(
+            "span",
+            "arquivo-processo",
+            `${arquivo.processo || "N/D"} (PID ${arquivo.pid || "N/D"})`
+        );
+
+        item.appendChild(caminho);
+        item.appendChild(processo);
+        lista.appendChild(item);
+    });
+
+    secao.appendChild(lista);
+    return secao;
+}
 
 function criarDetalhes(desktop) {
 
@@ -246,6 +339,14 @@ function criarDetalhes(desktop) {
 
     detalhes.appendChild(
         criarListaAplicativos(desktop)
+    );
+    
+    detalhes.appendChild(
+        criarListaNavegacao(desktop)
+    );
+
+    detalhes.appendChild(
+        criarListaArquivosAbertos(desktop)
     );
 
     return detalhes;
