@@ -306,3 +306,71 @@ main {
 .sem-aplicativos {
     opacity: 0.7;
 }
+
+.secao-navegacao,
+.secao-arquivos {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.secao-navegacao h3,
+.secao-arquivos h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+
+.lista-navegacao,
+.lista-arquivos {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.registro-navegacao,
+.arquivo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+
+.navegacao-url,
+.arquivo-caminho {
+    font-weight: 600;
+    color: #1e293b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: rtl;         /* mantém final visível ao truncar */
+    text-align: left;
+}
+
+.navegacao-info,
+.arquivo-processo {
+    font-size: 11px;
+    color: #64748b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sem-registros {
+    font-size: 13px;
+    color: #64748b;
+    margin: 4px 0 0;
+}
+
+@media (max-width: 600px) {
+    .lista-navegacao,
+    .lista-arquivos {
+        max-height: 240px;
+    }
+}

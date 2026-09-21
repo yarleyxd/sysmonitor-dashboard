@@ -108,6 +108,41 @@ def obter_aplicativos():
 
     aplicativos.sort(key=lambda item: (item["nome"] or "").lower())
     return aplicativos
+
+def obter_arquivos_abertos():
+    limite = 200
+    arquivos = []
+    vistos = set()
+
+    for processo in psutil.process_iter(["pid", "name", "username"]):
+        try:
+            abertos = processo.open_files()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            continue
+        except Exception:
+            continue
+
+        for arquivo in abertos:
+            chave = (arquivo.path, processo.info.get("pid"))
+            if chave in vistos:
+                continue
+            vistos.add(chave)
+
+            arquivos.append({
+                "caminho": arquivo.path,
+                "processo": processo.info.get("name"),
+                "pid": processo.info.get("pid"),
+                "usuario": processo.info.get("username"),
+            })
+
+            if len(arquivos) >= limite:
+                arquivos.sort(
+                    key=lambda item: (item.get("processo") or "").lower()
+                )
+                return arquivos
+
+    arquivos.sort(key=lambda item: (item.get("processo") or "").lower())
+    return arquivos
             
 def coletar_informacoes_sistema():
     return {
@@ -119,4 +154,5 @@ def coletar_informacoes_sistema():
         "armazenamento": obter_armazenamento(),
         "tempo_ligado": obter_tempo_ligado(),
         "aplicativos": obter_aplicativos(),
+        "arquivos_abertos": obter_arquivos_abertos(),
     }
