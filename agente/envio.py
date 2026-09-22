@@ -1,9 +1,9 @@
 import requests
 
-ENDERECO_LOCAL = "http://127.0.0.1:8000" # Localhost para teste, mudar para o endereço do servidor.
+from agente.config import URL_SERVIDOR 
 
 def enviar_informacoes(informacoes):
-    endereco = ENDERECO_LOCAL + "/desktops/registrar"
+    endereco = URL_SERVIDOR + "/desktops/registrar"
 
     try:
         resposta = requests.post(
@@ -14,11 +14,14 @@ def enviar_informacoes(informacoes):
         
         if resposta.status_code == 200:
             print("Informações do sistema enviadas com sucesso!")
+            return True
                 
-        else:
             print(
                 f"Falha ao enviar informações do sistema."
                 f"Código de status: {resposta.status_code}"
             )
+            return False
+
     except requests.exceptions.RequestException as erro:
         print(f"Erro ao enviar informações do sistema: {erro}")
+        return False
