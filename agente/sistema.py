@@ -1,12 +1,16 @@
 import os
 import platform
 import socket
+import uuid
 import psutil
 import time
 
 
 def obter_nome_desktop():
     return socket.gethostname()
+
+def obter_identificador():
+    return f"{obter_nome_desktop()}-{uuid.getnode():x}"
 
 def obter_sistema_operacional():
     return platform.system() + " " + platform.release()
@@ -147,6 +151,7 @@ def obter_arquivos_abertos():
 def coletar_informacoes_sistema():
     return {
         "nome": obter_nome_desktop(),
+        "identificador": obter_identificador(),
         "ip": obter_ip(),
         "sistema_operacional": obter_sistema_operacional(),
         "cpu": obter_cpu(),

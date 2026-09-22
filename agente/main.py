@@ -1,22 +1,33 @@
 import time
 from datetime import datetime
 
+from agente.config import CONFIG, URL_SERVIDOR
 from agente.envio import enviar_informacoes
 from agente.rede import obter_interfaces_rede
 from agente.sistema import coletar_informacoes_sistema
 from agente.sistema import obter_arquivos_abertos 
 from agente.navegacao import obter_historico_navegacao
 
-intervalo = 5
-intervalo_pesado = 30
+intervalo = CONFIG["intervalo"]
+intervalo_pesado = CONFIG["intervalo_pesado"]
+intervalo_maximo_falha = 60
+
 ultimo_pesado = 0.0
 cache_navegacao = []
 cache_arquivos = []
+falhas_consecutivas = 0
+
+def calcular_espera(falhas): 
+    if falhas <= 0:
+        return intervalo
+    espera = intervalo * (2 ** min(falhas, 4))
+    return min(espera, intervalo_maximo_falha)
 
 def iniciar_agente():
-    global ultimo_pesado, cache_navegacao, cache_arquivos
+    global ultimo_pesado, cache_navegacao, cache_arquivos, falhas_consecutivas
 
     print("Iniciando agente...")
+    print(f"Servidor configurado: {URL_SERVIDOR}")
     print(f"Enviando informações a cada {intervalo} segundos.")
 
     while True:
@@ -44,12 +55,17 @@ def iniciar_agente():
                 f"Arquivos: {len(cache_arquivos)} | " 
             )
 
-            enviar_informacoes(informacoes)
+            sucesso = enviar_informacoes(informacoes)
+            falhas_consecutivas = 0 if sucesso else falhas_consecutivas + 1
 
         except Exception as erro:
             print(f"Erro ao coletar informações: {erro}")
+            falhas_consecutivas += 1
 
-        time.sleep(intervalo)
+        espera = calcular_espera(falhas_consecutivas)
+        if falhas_consecutivas > 0:
+            print(f"Sem comunicação com o servidor. Nova tentativa em {espera}s.")
+        time.sleep(espera)
 
 if __name__ == "__main__":
     iniciar_agente()

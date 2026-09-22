@@ -1,0 +1,6 @@
+{
+    "servidor_ip": "127.0.0.1",
+    "servidor_porta": 8000,
+    "intervalo": 5,
+    "intervalo_pesado": 30
+}
