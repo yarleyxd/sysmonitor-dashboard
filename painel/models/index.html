@@ -4,30 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SysMonitor | Dashboard</title>
+    <title>SysMonitor | Painel</title>
+    <script>
+        (function () {
+            var tema = "claro";
+            try {
+                tema = localStorage.getItem("sysmonitor-tema") ||
+                    (window.matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro");
+            } catch (e) {}
+            document.documentElement.dataset.tema = tema;
+        })();
+    </script>
     <link rel="stylesheet" href="/arquivos/style.css">
 </head>
 
 <body>
     <header class="cabecalho">
-        <div>
-            <h1>SysMonitor</h1>
-            <p>Monitoramento de Computadores</p>
+        <div class="marca">
+            <div class="marca-icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                    <path d="M8 20h8M12 16v4"></path>
+                    <path d="M6.5 11l2.5-2.5 2.5 2 3-3.5"></path>
+                </svg>
+            </div>
+            <div>
+                <h1>SysMonitor</h1>
+                <p>Monitoramento de computadores</p>
+            </div>
         </div>
 
-        <div class="conexao">
-            <span class="indicador" id="indicador-conexao"></span>
-            <span class="status-servidor" id="status-servidor">Verificando...</span>
+        <div class="cabecalho-acoes">
+            <div class="conexao" role="status">
+                <span class="indicador" id="indicador-conexao"></span>
+                <span class="status-servidor" id="status-servidor">Verificando...</span>
+            </div>
+            <button type="button" class="botao-tema" id="botao-tema" aria-label="Alternar entre tema claro e escuro" title="Alternar tema">
+                <svg class="icone-lua" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+                </svg>
+                <svg class="icone-sol" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+                </svg>
+            </button>
         </div>
     </header>
 
     <main>
-        <section class="resumo">
-            <div class="card-resumo">
-                <span>Total de Computadores</span>
+        <div class="aviso" id="aviso-conexao" role="alert" hidden>
+            Sem conexão com o servidor. Exibindo os últimos dados recebidos; nova tentativa a cada 5 segundos.
+        </div>
+
+        <section class="resumo" aria-label="Resumo da rede">
+            <div class="card-resumo card-frota">
+                <span>Total de computadores</span>
                 <h2 id="total-computadores">0</h2>
+                <div class="barra-frota" role="img" aria-label="Proporção de computadores online">
+                    <div class="barra-frota-online" id="barra-online"></div>
+                </div>
             </div>
-            
+
             <div class="card-resumo">
                 <span>Online</span>
                 <h2 id="computadores-online">0</h2>
@@ -39,13 +76,13 @@
             </div>
 
             <div class="card-resumo">
-                <span>CPU Média</span>
-                <h2 id="cpu-media">0%</h2>
+                <span>CPU média</span>
+                <h2 id="cpu-media">—</h2>
             </div>
 
             <div class="card-resumo">
-                <span>RAM Média</span>
-                <h2 id="ram-media">0%</h2>
+                <span>RAM média</span>
+                <h2 id="ram-media">—</h2>
             </div>
         </section>
 
@@ -53,14 +90,37 @@
             <div class="cabecalho-secao">
                 <div>
                     <h2>Computadores</h2>
-                    <p>Monitoramento dos terminais registrados</p>
+                    <p id="contagem-resultados">Monitoramento dos terminais registrados</p>
                 </div>
-                <p id ="ultima-atualizacao">Aguardando dados...</p>
+                <p id="ultima-atualizacao">Aguardando dados...</p>
             </div>
 
-                <div id="lista-computadores">
-                    Carregando...
+            <div class="ferramentas">
+                <input type="search" id="busca" class="campo-busca" placeholder="Buscar por nome, IP ou sistema" aria-label="Buscar computadores" autocomplete="off">
+
+                <div class="filtros" role="group" aria-label="Filtrar por status">
+                    <button type="button" class="filtro ativo" data-filtro="todos" aria-pressed="true">Todos</button>
+                    <button type="button" class="filtro" data-filtro="online" aria-pressed="false">Online</button>
+                    <button type="button" class="filtro" data-filtro="offline" aria-pressed="false">Offline</button>
                 </div>
+
+                <label class="campo-ordenacao">
+                    <span>Ordenar por</span>
+                    <select id="ordenacao">
+                        <option value="nome">Nome</option>
+                        <option value="status">Offline primeiro</option>
+                        <option value="cpu">Maior uso de CPU</option>
+                        <option value="ram">Maior uso de RAM</option>
+                        <option value="disco">Maior uso de disco</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="lista-computadores" aria-live="polite">
+                <div class="computador esqueleto"></div>
+                <div class="computador esqueleto"></div>
+                <div class="computador esqueleto"></div>
+            </div>
         </section>
     </main>
 
