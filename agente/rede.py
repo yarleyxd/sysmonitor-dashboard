@@ -22,7 +22,7 @@ def obter_interfaces_rede():
                 "broadcast": endereco.broadcast
             })
 
-            if interface["enderecos"]:
-                interfaces.append(interface)
+        if interface["enderecos"]:
+            interfaces.append(interface)
     
     return interfaces

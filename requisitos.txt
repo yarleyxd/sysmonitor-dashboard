@@ -1,4 +1,8 @@
+# Dependências do servidor 
 fastapi
 uvicorn
+pydantic
+
+# Dependências do Agente
 psutil 
 requests

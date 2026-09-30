@@ -1,11 +1,15 @@
+import sys
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+RAIZ = Path(__file__).resolve().parent.parent
+if str(RAIZ) not in sys.path:
+    sys.path.insert(0, str(RAIZ))
+
 from servidor.api.desktops import rota 
 
-RAIZ = Path(__file__).resolve().parent.parent
 PAINEL = RAIZ / "painel"
 
 aplicacao = FastAPI(
@@ -23,17 +27,17 @@ aplicacao.mount(
 )
 
 
-@aplicacao.get("/")
+@aplicacao.get("/", status_code=status.HTTP_200_OK)
 def inicio():
         return FileResponse(PAINEL / "models" / "index.html")     
 
 
-@aplicacao.get("/status")
+@aplicacao.get("/status", status_code=status.HTTP_200_OK)
 def verificar_status():
     return {
         "status": "Online",
     }
 
-@aplicacao.get("/painel")
+@aplicacao.get("/painel", status_code=status.HTTP_200_OK)
 def abrir_painel():
     return FileResponse(PAINEL / "models" / "index.html")
