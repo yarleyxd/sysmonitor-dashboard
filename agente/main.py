@@ -4,8 +4,7 @@ from datetime import datetime
 from agente.config import CONFIG, URL_SERVIDOR
 from agente.envio import enviar_informacoes
 from agente.rede import obter_interfaces_rede
-from agente.sistema import coletar_informacoes_sistema
-from agente.sistema import obter_arquivos_abertos 
+from agente.sistema import coletar_informacoes_sistema, obter_arquivos_abertos
 from agente.navegacao import obter_historico_navegacao
 
 intervalo = CONFIG["intervalo"]
@@ -17,7 +16,7 @@ cache_navegacao = []
 cache_arquivos = []
 falhas_consecutivas = 0
 
-def calcular_espera(falhas): 
+def calcular_espera(falhas: int) -> int: 
     if falhas <= 0:
         return intervalo
     espera = intervalo * (2 ** min(falhas, 4))
@@ -42,7 +41,7 @@ def iniciar_agente():
             informacoes = coletar_informacoes_sistema()
             informacoes["interfaces_rede"] = obter_interfaces_rede()
             informacoes["navegacao"] = cache_navegacao
-            informacoes["arquivos_abertos"] = cache_arquivos
+            informacoes["arquivos"] = cache_arquivos
             informacoes["ultima_comunicacao"] = datetime.now().isoformat()
 
             print("Informações coletadas:")
@@ -50,7 +49,7 @@ def iniciar_agente():
                 f"  Desktop: {informacoes.get('nome')}, | "
                 f"IP: {informacoes.get('ip')} | "
                 f"CPU: {informacoes.get('cpu', {}).get('uso')}% | "
-                f"Apps: {len(informacoes.get('aplicativos') or [])}"
+                f"Apps: {len(informacoes.get('aplicativos') or [])} | "
                 f"Navegacao: {len(cache_navegacao)} | "
                 f"Arquivos: {len(cache_arquivos)} | " 
             )

@@ -1,9 +1,8 @@
 import requests
-
 from agente.config import URL_SERVIDOR 
 
-def enviar_informacoes(informacoes):
-    endereco = URL_SERVIDOR + "/desktops/registrar"
+def enviar_informacoes(informacoes: dict) -> bool:
+    endereco = f"{URL_SERVIDOR}/desktops/registrar"
 
     try:
         resposta = requests.post(
@@ -15,7 +14,7 @@ def enviar_informacoes(informacoes):
         if resposta.status_code == 200:
             print("Informações do sistema enviadas com sucesso!")
             return True
-                
+        else:   
             print(
                 f"Falha ao enviar informações do sistema."
                 f"Código de status: {resposta.status_code}"
