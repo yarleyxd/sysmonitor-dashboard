@@ -1,14 +1,15 @@
 import os
 import sys
 
-DIRETORIO_PROJETO = os.path.dirname(
-    os.path.dirname(
-        os.path.abspath(__file__)
-    )
-)
+if getattr(sys, 'frozen', False):
+    DIRETORIO_EXECUCAO = os.path.dirname(sys.executable)
+else:
+    DIRETORIO_EXECUCAO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-if DIRETORIO_PROJETO not in sys.path:
-    sys.path.insert(0, DIRETORIO_PROJETO)
+os.chdir(DIRETORIO_EXECUCAO)
+
+if DIRETORIO_EXECUCAO not in sys.path:
+    sys.path.insert(0, DIRETORIO_EXECUCAO)
 
 import servicemanager
 import win32event
@@ -49,9 +50,20 @@ class SysMonitorService(win32serviceutil.ServiceFramework):
             "SysMonitor Agente: serviço iniciado."
         )
 
-        iniciar_agente(self.deve_parar)
+        self.ReportServiceStatus(win32service.SERVICE_RUNNING)
 
-        servicemanager.LogInfoMsg(
+        try:
+            iniciar_agente(self.deve_parar)
+        
+        except Exception as erro:
+            servicemanager.LogErrorMsg(
+                f"SysMonitor Agente: erro no serviço: {erro}"
+            )
+
+            raise
+
+        finally:
+            servicemanager.LogInfoMsg(
             "SysMonitor Agente: serviço encerrado."
         )
 
@@ -64,4 +76,9 @@ class SysMonitorService(win32serviceutil.ServiceFramework):
         return resultado == win32event.WAIT_OBJECT_0
 
 if __name__ == "__main__":
-    win32serviceutil.HandleCommandLine(SysMonitorService)
+    if len(sys.argv) == 1:
+        servicemanager.Initialize()
+        servicemanager.PrepareToHostSingle(SysMonitorService)
+        servicemanager.StartServiceCtrlDispatcher()
+    else:
+        win32serviceutil.HandleCommandLine(SysMonitorService)
