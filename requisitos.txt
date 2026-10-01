@@ -6,3 +6,4 @@ pydantic
 # Dependências do Agente
 psutil 
 requests
+pywin32
