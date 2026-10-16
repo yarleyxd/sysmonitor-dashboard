@@ -16,6 +16,8 @@ LIMITE_OFFLINE = 40 # Limite em segundos p/ definir como "Offline" um desktop qu
 CAMINHO_DADOS = Path(__file__).resolve().parent.parent / "dados" / "desktops.json"
 CAMINHO_DADOS.parent.mkdir(parents=True, exist_ok=True)
 
+trava = threading.lock()
+
 def carregar_desktops() -> List[Dict[str, Any]]:
     if CAMINHO_DADOS.is_file():
         try:
@@ -56,21 +58,21 @@ def atualizar_status(desktop: Dict[str, Any]) -> Dict[str, Any]:
 
 @rota.get("/", status_code=status.HTTP_200_OK)
 def listar_desktops():
-    for desktop in desktops:
-        atualizar_status(desktop)
-
-    return {
-        "Desktops": desktops,
-    }
+    with trava:
+        for desktop in desktops:
+            atualizar_status(desktop)
+        
+        resultado = [dict(desktop) for desktop in desktops]
+            
+    return {"Desktops": resultado}
 
 @rota.get("/{identificador}", status_code=status.HTTP_200_OK)
 def obter_desktop(identificador: str):
-    for desktop in desktops:
-        atualizar_status(desktop)
-        if obter_chave(desktop) == identificador or desktop.get("nome") == identificador:
-            return {
-                "desktop": desktop,
-            }
+    with trava:
+        for desktop in desktops:
+            atualizar_status(desktop)
+            if obter_chave(desktop) == identificador or desktop.get("nome") == identificador:
+                return {"desktop": dict(desktop)}
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -91,18 +93,19 @@ def registrar_desktop(payload: DesktopRegistroSchema):
 
     chave_recebida = obter_chave(informacoes)
 
-    for indice, desktop in enumerate(desktops):
-        if obter_chave(desktop) == chave_recebida:
-            desktop_atualizado = {**desktop, **informacoes}
-            desktops[indice] = desktop_atualizado
-            salvar_desktops()
-            return {
-                "mensagem": "Desktop registrado com sucesso!",
-                "desktop": desktop_atualizado
-            }
+    with trava:
+        for indice, desktop in enumerate(desktops):
+            if obter_chave(desktop) == chave_recebida:
+                desktop_atualizado = {**desktop, **informacoes}
+                desktops[indice] = desktop_atualizado
+                salvar_desktops()
+                return {
+                    "mensagem": "Desktop registrado com sucesso!",
+                    "desktop": desktop_atualizado
+                }
             
-    desktops.append(informacoes)
-    salvar_desktops()
+        desktops.append(informacoes)
+        salvar_desktops()
 
     return {
         "mensagem": "Desktop registrado com sucesso!",
@@ -111,10 +114,11 @@ def registrar_desktop(payload: DesktopRegistroSchema):
 
 @rota.delete("/{identificador}", status_code=status.HTTP_200_OK)
 def remover_desktop(identificador: str):
-    for indice, desktop in enumerate(desktops):
-        if obter_chave(desktop) == identificador or desktop.get("nome") == identificador:
-            desktops.pop(indice)
-            salvar_desktops()
-            return {"mensagem": "Desktop removido com sucesso!"}
+    with trava:
+        for indice, desktop in enumerate(desktops):
+            if obter_chave(desktop) == identificador or desktop.get("nome") == identificador:
+                desktops.pop(indice)
+                salvar_desktops()
+                return {"mensagem": "Desktop removido com sucesso!"}
 
     raise HTTPException(status_code=404, detail="Desktop não encontrado.")

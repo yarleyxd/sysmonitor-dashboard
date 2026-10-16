@@ -43,7 +43,6 @@ def coletar_informacoes():
     informacoes["interfaces_rede"] = obter_interfaces_rede()
     informacoes["navegacao"] = cache_navegacao
     informacoes["arquivos"] = cache_arquivos
-    informacoes["ultima_comunicacao"] = datetime.now().isoformat()
 
     return informacoes
 

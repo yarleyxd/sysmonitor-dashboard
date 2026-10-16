@@ -243,8 +243,10 @@ function detalheCpu(cpu) {
     const threads = numeroOuNulo(cpu?.threads);
 
     if (nucleos === null || threads === null) {
-        return `${nucleos} núcleos / ${threads}`;
+        return "";
     }
+
+    return `${nucleos} núcleos / ${threads} threads`;
 }
 
 function criarItemAplicativo(aplicativo) {
@@ -332,7 +334,7 @@ function criarAbas(desktop, chave) {
     abas.forEach(aba =>{
         const selecionada = aba.id === ativa;
 
-        const botao = criarElemento("button", "aba" + (selecionada ? " ativa" : ""))
+        const botao = criarElemento("button", "aba" + (selecionada ? " ativa" : ""));
         botao.type = "button";
         botao.setAttribute("role", "tab");
         botao.setAttribute("aria-selected", String(selecionada));
@@ -572,7 +574,7 @@ function restaurarRolagem() {
 function criarMensagemVazia(titulo,text) {
     const mensagem = criarElemento("div", "mensagem-vazia");
     mensagem.appendChild(criarElemento("strong", "", titulo));
-    mensagem.appendChild(document.createTextNode(texto));
+    mensagem.appendChild(document.createTextNode(text));
     return mensagem;
 }
 
