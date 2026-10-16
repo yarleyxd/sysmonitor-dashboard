@@ -96,11 +96,6 @@ def localizar_agente():
         / "SysMonitorAgente"
         / "SysMonitorAgente.exe",
 
-        Path(__file__).resolve().parent.parent
-        / "dist"
-        / "SysMonitorAgente"
-        / "SysMonitorAgente.exe",
-
         Path.cwd()
         / "dist"
         / "SysMonitorAgente.exe",

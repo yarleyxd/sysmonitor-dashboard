@@ -159,5 +159,4 @@ def coletar_informacoes_sistema():
         "armazenamento": obter_armazenamento(),
         "tempo_ligado": obter_tempo_ligado(),
         "aplicativos": obter_aplicativos(),
-        "arquivos_abertos": obter_arquivos_abertos(),
     }

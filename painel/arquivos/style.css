@@ -242,6 +242,10 @@ main {
     color: var(--critico);
 }
 
+.card-resumo h2[data-nivel="nd"] {
+    color: var(--tinta-3);
+}
+
 .barra-frota {
     height: 6px;
     margin-top: 14px;
