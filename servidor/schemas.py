@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -58,18 +58,18 @@ class ArquivoAbertoSchema(BaseModel):
 
 
 class DesktopRegistroSchema(BaseModel):
-    nome: str
-    identificador: Optional[str] = None
+    nome: str = Field(min_length=1, max_length=255)
+    identificador: Optional[str] = Field(default= None, max_length=255)
     ip: Optional[str] = None
     sistema_operacional: Optional[str] = None
     cpu: Optional[CpuSchema] = None
     ram: Optional[RamSchema] = None
     armazenamento: Optional[ArmazenamentoSchema] = None
     tempo_ligado: Optional[TempoLigadoSchema] = None
-    interfaces_rede: List[InterfaceRedeSchema] = Field(default_factory=list)
-    aplicativos: List[AplicativoSchema] = Field(default_factory=list)
-    navegacao: List[NavegacaoSchema] = Field(default_factory=list)
-    arquivos: List[ArquivoAbertoSchema] = Field(default_factory=list)
-    arquivos_abertos: Optional[List[ArquivoAbertoSchema]] = None
+    interfaces_rede: List[InterfaceRedeSchema] = Field(default_factory=list, max_length=100)
+    aplicativos: List[AplicativoSchema] = Field(default_factory=list, max_length=2000)
+    navegacao: List[NavegacaoSchema] = Field(default_factory=list, max_length=500)
+    arquivos: List[ArquivoAbertoSchema] = Field(default_factory=list, max_length=1000)
+    arquivos_abertos: Optional[List[ArquivoAbertoSchema]] = Field(default=None, max_length=1000)
     ultima_atividade: Optional[str] = None
     status: Optional[str] = None
