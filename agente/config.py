@@ -1,6 +1,8 @@
-import json 
+import json
+import logging
 import os
 import sys
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 def diretorio_programdata():
@@ -40,6 +42,8 @@ PADRAO = {
     "intervalo": 5,
     "intervalo_pesado": 30,
 }
+#Os avisos ficam guardados e o agente os registra no log assim que ele é iniciado.
+AVISOS = []
 
 def aplicar_variaveis_ambiente(config): 
     variaveis = {
@@ -56,7 +60,7 @@ def aplicar_variaveis_ambiente(config):
             try:
                 config[chave] = tipo(valor)
             except ValueError:
-                pass
+                AVISOS.append(f"Variável {nome} inválida ({valor!r}); ignorada.")
 
     return config
 
@@ -69,17 +73,63 @@ def carregar_config():
                 dados = json.load(arquivo)
             if isinstance(dados, dict):
                 config.update(dados)
+            else:
+                AVISOS.append(f"{CAMINHO_CONFIG} não contém um objeto JSON; usando valores padrão.")
         except (json.JSONDecodeError, OSError) as erro:
-            print(f"Aviso: não foi possível ler {CAMINHO_CONFIG}. ({erro}).")
+            print(f"Não foi possível ler {CAMINHO_CONFIG} ({erro}); usando valores padrão.")
+    elif "SYSMONITOR_SERVIDOR_IP" not in os.environ:
+        AVISOS.append(
+            f"Arquivo de configuração não encontrado ({CAMINHO_CONFIG}); "
+            f"usando o servidor padrão {PADRAO['servidor_ip']}."
+        )
         
     config = aplicar_variaveis_ambiente(config)
 
-    try:
-        config["servidor_porta"] = int(config["servidor_porta"])
-    except (TypeError, ValueError):
-        config["servidor_porta"] = PADRAO["servidor_porta"]
+    for chave in ("servidor_porta", "intervalo", "intervalo_pesado"):
+        try:
+            config[chave] = int(config[chave])
+            if config[chave] < 1:
+                raise ValueError
+        except (TypeError, ValueError):
+            AVISOS.append(f"Valor inválido para '{chave}' ({config[chave]!r}); usando {PADRAO[chave]}.")
+
     return config
 
 
 CONFIG = carregar_config()
 URL_SERVIDOR = f"http://{CONFIG['servidor_ip']}:{CONFIG['servidor_porta']}"
+
+def configurar_logs():
+    "Log em arquivo: (C:\\ProgramData\\sysmonitor\\logs\\agente.log)."
+    log = logging.getLogger("sysmonitor.agente")
+
+    if log.handlers:
+        return log
+    
+    log.setLevel(logging.INFO)
+    log.propagate = False
+
+    formato = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+
+    # Como serviço (ou sem o console) não existe stderr.
+    if sys.stderr is not None:
+        console = logging.StreamHandler()
+        console.setFormatter(formato)
+        log.addHandler(console)
+
+    try:
+        pasta = diretorio_programdata() / "logs"
+        pasta.mkdir(parents=True, exist_ok=True)
+
+        arquivo = RotatingFileHandler(
+            pasta / "agente.log",
+            maxBytes=1_000_000,
+            backupCount=3,
+            encoding="utf-8",
+        )
+        arquivo.setFormatter(formato)
+        log.addHandler(arquivo)
+    except OSError:
+        pass
+    
+    return log

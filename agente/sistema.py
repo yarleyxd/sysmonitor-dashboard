@@ -158,5 +158,4 @@ def coletar_informacoes_sistema():
         "ram": obter_ram(),
         "armazenamento": obter_armazenamento(),
         "tempo_ligado": obter_tempo_ligado(),
-        "aplicativos": obter_aplicativos(),
     }

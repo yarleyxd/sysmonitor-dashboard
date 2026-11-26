@@ -1,26 +1,30 @@
+import logging
 import requests
 from agente.config import URL_SERVIDOR 
 
+log = logging.getLogger("sysmonitor.agente.enivo")
+
+ENDERECO = f"{URL_SERVIDOR}/desktops/registrar"
+TIMEOUT = (5, 10) # Conexão, reposta (segundos)
+
+# A sessão reaproveita a conexão TCP entre envios
+_sessao = requests.Session()
+
+
 def enviar_informacoes(informacoes: dict) -> bool:
-    endereco = f"{URL_SERVIDOR}/desktops/registrar"
-
     try:
-        resposta = requests.post(
-            endereco,
-            json=informacoes,
-            timeout= 5
-        )
-        
-        if resposta.status_code == 200:
-            print("Informações do sistema enviadas com sucesso!")
-            return True
-        else:   
-            print(
-                f"Falha ao enviar informações do sistema."
-                f"Código de status: {resposta.status_code}"
-            )
-            return False
-
+        resposta = _sessao.post(ENDERECO, json=informacoes, timeout=TIMEOUT)
     except requests.exceptions.RequestException as erro:
-        print(f"Erro ao enviar informações do sistema: {erro}")
+        log.warning("Falha de comunicação com %s: %s", ENDERECO, erro)
         return False
+    
+    if resposta.status_code == 200:
+        log.debug("Informações enviadas com sucesso.")
+        return True
+    
+    log.warning(
+        "O servidor recusou o envio (HTTP %s): %s",
+        resposta.status_code,
+        resposta.text[:300],
+    )
+    return False
