@@ -616,6 +616,14 @@ main {
     gap: 12px;
 }
 
+.item-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
 .item-principal {
     font-size: 13px;
     font-weight: 600;

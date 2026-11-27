@@ -7,3 +7,6 @@ pydantic
 psutil 
 requests
 pywin32
+
+# Empacotamento
+pyinstaller

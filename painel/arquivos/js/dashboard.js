@@ -501,17 +501,19 @@ function atualizarResumo(desktops) {
     const total = desktops.length;
     const online = desktops.filter(estaOnline).length;
 
-    const mediaCpu = media(desktops.map(d => d.cpu?.uso));
-    const mediaRam = media(desktops.map(d => d.ram?.uso_percentual));
+    // As médias consideram só os computadores online: o último valor de um PC offline está desatualizado.
+    const ativos = desktops.filter(estaOnline);
+    const mediaCpu = media(ativos.map(d => d.cpu?.uso));
+    const mediaRam = media(ativos.map(d => d.ram?.uso_percentual));
 
     totalComputadores.textContent = total;
     computadoresOnline.textContent = online;
     computadoresOffline.textContent = total - online;
 
-    cpuMedia.textContent = mediaCpu === null ? "-": formatarPercentual(mediaCpu);
+    cpuMedia.textContent = mediaCpu === null ? "—" : formatarPercentual(mediaCpu);
     cpuMedia.dataset.nivel = nivelUso(mediaCpu);
 
-    ramMedia.textContent = mediaRam === null? "-": formatarPercentual(mediaRam);
+    ramMedia.textContent = mediaRam === null ? "—" : formatarPercentual(mediaRam);
     ramMedia.dataset.nivel = nivelUso(mediaRam);
 
     barraOnline.style.width = total ? `${(online / total) * 100}%` : "0%"
@@ -626,9 +628,21 @@ function marcarConexao(conectado) {
         : "Falha ao atualizar os dados";
 }
 
+let carregando = false;
+
 async function carregarComputadores() {
+    // Se a requisição anterior ainda não terminou, não empilha outra.
+    if (carregando) {
+        return;
+    }
+
+    carregando = true;
+
     try {
-        const resposta = await fetch("/desktops/", { cache: "no-store"});
+        const resposta = await fetch("/desktops/", {
+            cache: "no-store",
+            signal: AbortSignal.timeout(INTERVALO_ATUALIZACAO_MS),
+        });
 
         if (!resposta.ok) {
             throw new Error(`Erro HTTP ${resposta.status}`);
@@ -650,6 +664,8 @@ async function carregarComputadores() {
         console.error("Erro ao carregar computadores:", erro);
 
         marcarConexao(false);
+    } finally {
+        carregando = false;
     }
 }
 
